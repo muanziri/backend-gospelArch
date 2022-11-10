@@ -51,7 +51,7 @@ const issue2options = {
   credentials: true,
   maxAge: 3600
 };
- app.use(cors({
+ app.use(cors({origin: "*",
  credentials  : true}));
  
 app.use(Express.urlencoded({ extended: true }))
