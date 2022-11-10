@@ -51,7 +51,7 @@ const issue2options = {
   credentials: true,
   maxAge: 3600
 };
- app.use(cors({origin: "*",
+ app.use(cors({origin: "http://localhost:3000",
  credentials  : true}));
  
 app.use(Express.urlencoded({ extended: true }))
