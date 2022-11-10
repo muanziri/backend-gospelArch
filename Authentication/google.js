@@ -46,7 +46,7 @@ var GOOGLE_CLIENT_SECRET='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'
 passport.use(new GoogleStrategy({
     clientID:     GOOGLE_CLIENT_ID,
     clientSecret: GOOGLE_CLIENT_SECRET,
-    callbackURL: "http://localhost:3001/auth/google/callback",
+    callbackURL: "https://gospel-archive.herokuapp.com/auth/google/callback",
     passReqToCallback   : true
   },
   function(request, accessToken, refreshToken, profile, done) {
