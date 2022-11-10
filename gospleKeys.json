@@ -1,0 +1,12 @@
+{
+  "type": "service_account",
+  "project_id": "gospelarchived",
+  "private_key_id": "bfc971b8a2a08793c0608c44937eb47b32c3d775",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvAIBADANBgkqhkiG9w0BAQEFAASCBKYwggSiAgEAAoIBAQCyAx4N5X68Glem\nVklHPnxIOVoTURvxkQxo+DS47CcWBx0hB4hJqsQKrCX+n0YNY9f+gz6Y1svUYqpl\noCbMPS8l0RHz/FBsPaRK44Xc0kYZYgbPxtIAOqjLbDPbehH9HuFtz7v7eI8hFwem\nAWgRdshtf5CAavE9yyzq7QUfSmswmZXaP9ZT2Mur00Lx+C3fe2XZmyeTayfsg+c0\nO2ZDpDRSZg672sXq8bFjRrTQvzrLO73ZjptayyafNileCP+VGUjPQzq9gSIzfGsj\nG7RFxqo2F0ymf9aRSH9AteoEFBxR3P1Dc5H7H8plN11S66g/oBSp7h6j/5oNWvwe\nWmk+p+gXAgMBAAECggEAJhsOuvDOkVueOags5YhVuGw2gP4S2kIvguTm/FLpBwkc\nzi47mXFpp9M0Cu5zY3hlC0FzC+qnFV7NlRWUWJIcXp8DldQELzd+zN0pkZydjt9y\nD9ZCq/PioDEYZLob0bBjl0sptWoYUYAJjhqs+VgRDYeKGkNKQu0UP3Hfb9RRX8SU\nwI4Zl+ebaHILTWxUi3CaaHnxL+//gkMGcIsdZ79F+xxN6gh0KKOhFW4nfsaFUVVZ\n3PHaHKFQOtrCIJfL03PKWfdImgEW8Dhxo637Brd8ZhbxyPyLWAerRwY7doFN1ukU\ntwwfc+CAZkifyF7nlX7BXTCaFd8Z/l+Q8IycR7wvaQKBgQDxNsxVfkbebnEeSLm8\noqFDiqfKh1unjY1ktW6SRSvrmZtt/vluboVoXPwOOFBpy7AcH+DkDyaKmhYbV+XK\nkiVS1+d/Mi3lDH2gWHDsciVRor267O8KI9kNYYK/PKiOAJpVZenebUAhCRWO7I1k\n58cGzNm134X+UudW1gfIqPEmuwKBgQC87Ilqklv67LzSWr+Cqy0g2NyrUIqmAvvT\nSWWHEDZzV4sNO9evYnEblhAFhbp9IirzYRu/+QI5S7VXX8p6YrTvo39g8CaIU/zX\nmXWcjFOI52ARWh99wA/InBx53sgfDlQW3XfF1q8GnFPp76J+KsmedgjMbc/xEK5h\nRTqUY49kVQKBgAZh0so4Sxu7hFauyetJykaFNqdPKYenYSRXAJPyLJVRPSGN63+W\ngQUf4LNnngkOkJxN459lHznvlcInczcG4uHsQH3HEBvNVs2VSXeYFZCxY5+8gR6d\nkDKgb9srebI4Jd04kxWFgnrdSKq9a4hN8aAmb2Q2g88U1nYft5kBj0/dAoGAXqgU\n4bSbKUncAXk+YvXpEoAVcDBWh38PNXmcyOMypO/D18mX82PbT/sL4/hwy6mG45JQ\nGQtmNdbc8P4psNAr37WHaMZqR/vsvwlAiEM2x21GEOuaw6KrRdQR4G3izsybDSnB\njPpXj3RcBuXuAFDn2+E/301V1m6JMGtDQn3vplECgYA+MpIXxSAcw+B2IEd9ePg7\nLR0l4xEcaU2TyzwLQl4ScWd9DK8XzUcoV/o4Ir9C8CsKTis5clrZE4AX5oAP1dR1\nnlVKcmHOQ1XB5Zf0w7xugMFDk2xWEnWm4yg7ctG+cQFF8IOWBS+1dbZy5kNLnC6m\n4ElyyZbD1Id3DsZrR2sOeQ==\n-----END PRIVATE KEY-----\n",
+  "client_email": "gospelarchived@gospelarchived.iam.gserviceaccount.com",
+  "client_id": "110676896777746953613",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/gospelarchived%40gospelarchived.iam.gserviceaccount.com"
+}
