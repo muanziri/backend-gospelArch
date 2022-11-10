@@ -96,7 +96,7 @@ app.get('/api/auth/google',
       ['email', 'profile']
   }
   ));
-app.get('/api/auth/google/callback',
+app.get('/auth/google/callback',
   passport.authenticate('google', { failureRedirect: theFrontEndProxy+'/authentication/sign-in' }),
   function (req, res) {
     
@@ -671,6 +671,6 @@ app.get('/api/Content/mostViews', (req, res) => {
   })
 })
 let port=process.env.PORT|| 3001
-app.listen(3001, () => {
+app.listen(port, () => {
   console.log('heard from 3001')
 })
