@@ -31,6 +31,11 @@ const UserSchema = new Schema({
      default:0
 
     },
+    pageNumber:{
+     type:Number,
+     required:true,
+     default:1
+    },
     CommentId: [String],
     CopyRightStatus:{
         type:Boolean,

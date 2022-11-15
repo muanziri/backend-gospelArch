@@ -16,7 +16,7 @@ var jwToken = new google.auth.JWT(
       console.log("error : " + authErr);
       return;
     } else {
-      console.log("Authorization accorded");
+     console.log("Authorization accorded");
     }
   });
   const totheDrivers= (fileMetadata,media,RecordTitle,stringedFilePath,user,folderIda,NewsBody)=>{
@@ -37,7 +37,7 @@ var jwToken = new google.auth.JWT(
        console.error(err);
      } else {
       
-       console.log('File Id: ', file.data.id);
+      // console.log('File Id: ', file.data.id);
        console.log(user.id)
     
        UserModel.updateOne({userName:user.userName},{$addToSet:{Recordings:file.data.id}},function (err, docs) {
@@ -75,7 +75,7 @@ var jwToken = new google.auth.JWT(
        console.error(err);
      } else {
       
-       console.log('File Id: ', file.data.id);
+       //console.log('File Id: ', file.data.id);
        const transactionDetailsM =await paymentMonth.find({userName:user.userName});
        const transactionDetailsW=await  paymentWeek.find({userName:user.userName});
        const transactionDetailsY=await  paymentYear.find({userName:user.userName});

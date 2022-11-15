@@ -36,7 +36,7 @@ jwToken.authorize((authErr) => {
     console.log("error : " + authErr);
     return;
   } else {
-    console.log("Authorization accorded");
+   // console.log("Authorization accorded");
   }
 });
 paypal.configure({
@@ -51,7 +51,8 @@ const issue2options = {
   credentials: true,
   maxAge: 3600
 };
- app.use(cors({origin: "http://localhost:3000",
+ app.use(cors({origin: ["http://localhost:3000","http://192.168.1.68:3000"],
+ methods:['POST','GET','PUSH'],
  credentials  : true}));
  
 app.use(Express.urlencoded({ extended: true }))
@@ -61,7 +62,6 @@ app.use(session({
   saveUninitialized: true,
   cookie: { maxAge: 1000 * 60 * 60 * 24 }
 }))
-if(process.env.NODE_ENV === "production"){}
 app.use(Express.static('build'))
 app.use(Express.urlencoded({ extended: true }));
 
@@ -111,7 +111,7 @@ app.get('/auth/twitter/callback',
   passport.authenticate('twitter', { failureRedirect: '/login' }),
   function(req, res) {
     // Successful authentication, redirect home.
-    console.log(req.user)
+   // console.log(req.user)
   })
   app.get('/api/auth/facebook',
   passport.authenticate('facebook'));
@@ -120,7 +120,7 @@ app.get('/api/auth/facebook/callback',
   passport.authenticate('facebook', { failureRedirect: '/login' }),
   function(req, res) {
     // Successful authentication, redirect home.
-    console.log(req.user)
+  //  console.log(req.user)
   });
 app.get('/api/user', (req, res) => {
   UserModel.find().then((result)=>{
@@ -156,6 +156,7 @@ app.get('/login', (req, res) => {
   //res.json({messageFailure:'the user Already  exist'})
   res.redirect(theFrontEndProxy+'/authentication/sign-in')
 })
+
 
 app.get('/api/FlashMessagesUser', (req, res) => {
   if (req.user) {
@@ -239,7 +240,7 @@ app.post('/api/ToTheDrive', MulterAnyFunction.any(), (req, res) => {
           // Handle error
           console.error(err);
         } else {
-          console.log('finish upload thumbnail and  video');
+         // console.log('finish upload thumbnail and  video');
           new VideoContent({
             userName: user.user.userName,
             ProfilePhotoUrl: user.user.ProfilePhotoUrl,
@@ -251,7 +252,7 @@ app.post('/api/ToTheDrive', MulterAnyFunction.any(), (req, res) => {
             Title: req.body.Title
           }).save().then((response) => {
             UserModel.updateOne({ userName: user.user.userName }, { $addToSet: { PostsIds: response.id } }, function () {
-              console.log('updated the usermodel', response.id)
+             // console.log('updated the usermodel', response.id)
             })
           })
 
@@ -270,12 +271,12 @@ app.post('/api/addComment', MulterAnyFunction.any(), (req, res) => {
     Comment: req.body.comment
   }).save().then((results) => {
     VideoContent.updateOne({ ThumbnailId: req.body.VideoId }, { $addToSet: { CommentsIds: results.id } }, () => {
-      console.log('')
+     // console.log('')
     })
     VideoContent.findOne({ ThumbnailId: req.body.VideoId }).then((res) => {
       //console.log(res)
       UserModel.updateOne({ userName: res.userName }, { $addToSet: { CommentId: results.id } }, () => {
-        console.log('')
+      //  console.log('')
       })
     })
 
@@ -365,7 +366,7 @@ app.get('/api/coinbasecConfirmPayment/:id',(req,res)=>{
   let idForSupporter=theId.slice(0,24)
   let idForReaciver=theId.slice(24,48)
   let ammount=theId.slice(48)
-  console.log(idForSupporter,idForReaciver,ammount)
+  //console.log(idForSupporter,idForReaciver,ammount)
   UserModel.findById(idForSupporter).then((supporter)=>{
   VideoContent.findById(idForReaciver).then((Reaciver)=>{
     let newSupport=supporter.supportAmmount+ammount
@@ -377,7 +378,7 @@ app.get('/api/coinbasecConfirmPayment/:id',(req,res)=>{
       Notification:supporterBody
     }).save().then((supporter)=>{
      UserModel.updateOne({userName:supporter.userName},{$addToSet:{notifications:supporter.id}},()=>{
-       console.log('notifiation pushed')
+      // console.log('notifiation pushed')
      })
     })
     new Notification({
@@ -386,10 +387,10 @@ app.get('/api/coinbasecConfirmPayment/:id',(req,res)=>{
       Notification:ReaciverBody
     }).save().then((reaciver)=>{
       UserModel.updateOne({userName:reaciver.userName},{$addToSet:{notifications:reaciver.id}},()=>{
-        console.log('notifiation2 pushed')
+       // console.log('notifiation2 pushed')
       })
       UserModel.updateOne({userName:reaciver.userName},{supportAmmount:newSupport},()=>{
-        console.log('new support added')
+       // console.log('new support added')
         res.redirect(theFrontEndProxy+'/')
       })
     })
@@ -404,7 +405,7 @@ app.get('/api/PaypalConfirmPayment/:id',(req,res)=>{
   let idForReaciver=theId.slice(24,48)
   let ammount=theId.slice(48)
   let actualAmmount=ammount - parseInt(ammount)*0.15
-  console.log(actualAmmount)
+ // console.log(actualAmmount)
   const payerId = req.query.PayerID;
   const paymentId = req.query.paymentId;
   const execute_payment_json = {
@@ -422,7 +423,7 @@ app.get('/api/PaypalConfirmPayment/:id',(req,res)=>{
         console.log(error.response);
         throw error;
     } else {
-      console.log('finnished to payment')
+    //  console.log('finnished to payment')
     }
 })
   UserModel.findById(idForSupporter).then((supporter)=>{
@@ -436,7 +437,7 @@ app.get('/api/PaypalConfirmPayment/:id',(req,res)=>{
       Notification:supporterBody
     }).save().then((supporter)=>{
      UserModel.updateOne({userName:supporter.userName},{$addToSet:{notifications:supporter.id}},()=>{
-       console.log('notifiation pushed')
+      // console.log('notifiation pushed')
      })
     })
     new Notification({
@@ -445,10 +446,10 @@ app.get('/api/PaypalConfirmPayment/:id',(req,res)=>{
       Notification:ReaciverBody
     }).save().then((reaciver)=>{
       UserModel.updateOne({userName:reaciver.userName},{$addToSet:{notifications:reaciver.id}},()=>{
-        console.log('notifiation2 pushed')
+      //  console.log('notifiation2 pushed')
       })
       UserModel.updateOne({userName:reaciver.userName},{supportAmmount:newSupport},()=>{
-        console.log('new support added')
+      //  console.log('new support added')
         res.redirect(theFrontEndProxy+'/')
       })
     })
@@ -458,13 +459,17 @@ app.get('/api/PaypalConfirmPayment/:id',(req,res)=>{
    
   
 })
+app.post('/api/search',MulterAnyFunction.any(),async(req,res)=>{
+  let searchRes= await VideoContent.find({Title:{$regex:new RegExp('^'+req.body.payload+'.*','i')}}).exec();
+  res.json(searchRes.slice(0,10))
+})
 app.post('/api/addLike', MulterAnyFunction.any(), (req, res) => {
   //ikosa
   UserModel.findOne({folderId:req.body.FolderId}).then((results) => {
     let newLikes = results.likes + 1
     VideoContent.updateOne({ ThumbnailId: req.body.videoId }, { $addToSet: { Likes: req.body.user } }, () => {
       UserModel.updateOne({ userName: results.userName }, { likes: newLikes }, () => {
-        console.log('likes updated')
+       // console.log('likes updated')
       })
     })
 
@@ -482,7 +487,7 @@ app.post('/api/addViews', MulterAnyFunction.any(), (req, res) => {
     let newLikesUserModel = results.views + 1
     VideoContent.updateOne({ ThumbnailId: req.body.videoId }, {Views:newLikesVideo}, () => {
       UserModel.updateOne({folderId:results.folderId}, { views: newLikesUserModel }, () => {
-        console.log('views updated')
+      //  console.log('views updated')
       })
     })})
 
@@ -518,7 +523,7 @@ app.post('/api/ChangeProfileInfo', MulterAnyFunction.any(), (req, res) => {
     } else {
      let theNewUrl="https://drive.google.com/uc?export=download&id="+file.data.id
       UserModel.updateOne({folderId:req.body.userId},{ProfilePhotoUrl:theNewUrl,Email:req.body.ChangeEmail,userName:req.body.ChangeName,phoneNumber:req.body.ChangePhone},()=>{
-        console.log('updated')
+       // console.log('updated')
       })
       
     }
@@ -529,25 +534,25 @@ app.post('/api/ChangeProfileInfo', MulterAnyFunction.any(), (req, res) => {
 })
 app.post('/api/ChangePrivacy', MulterAnyFunction.any(), (req, res) => {
   VideoContent.updateOne({ ThumbnailId: req.body.thumbnailId }, {private: req.body.booleanGiven}, function () {
-    console.log('private changed')
+   // console.log('private changed')
   })
 })
 app.post('/api/ManupulateDownloads', MulterAnyFunction.any(), (req, res) => {
 
   VideoContent.updateOne({ ThumbnailId: req.body.thumbnailId }, {showDownloadButton: req.body.booleanGiven}, function () {
-    console.log('download Changed changed')
+   // console.log('download Changed changed')
   })
 })
 app.post('/api/changeCommency', MulterAnyFunction.any(), (req, res) => {
 
   VideoContent.updateOne({ ThumbnailId: req.body.thumbnailId }, {allowCommenting: req.body.booleanGiven}, function () {
-    console.log('Commenting changed')
+   // console.log('Commenting changed')
   })
 })
 app.post('/api/DeleteVideo', MulterAnyFunction.any(), (req, res) => {
   VideoContent.deleteOne({ThumbnailId:req.body.thumbnailId},(err)=>{
     if (err) throw err;
-    console.log('video with ID: '+req.body.thumbnailId+' is   deleted')
+   // console.log('video with ID: '+req.body.thumbnailId+' is   deleted')
   })
    drive.files.delete( {
     auth: jwToken,
@@ -558,7 +563,7 @@ app.post('/api/DeleteVideo', MulterAnyFunction.any(), (req, res) => {
 })
 app.post('/api/supportButtonManupulation', MulterAnyFunction.any(), (req, res) => {
 
-console.log('the request us made')
+//console.log('the request us made')
 
 })
 app.post('/api/paypalPayout', MulterAnyFunction.any(),(req,res)=>{
@@ -589,14 +594,14 @@ app.post('/api/paypalPayout', MulterAnyFunction.any(),(req,res)=>{
         ]
     })
 }) .then(res => res.json())
-.then((responce)=> console.log(responce))
+.then((responce)=>{ /*console.log(responce)*/})
  .catch(err => console.error('error:' + err));
 })
 app.post('/api/ChangeshowAccountPerfomance', MulterAnyFunction.any(),(req,res)=>{
   if(req.body.showAccountPerfomance=='true'){
      UserModel.findByIdAndUpdate(req.body.userID,{showAccountPerfomance:true},(err)=>{
     if (err){ console.error(err)}
-    console.log('updated')
+    //console.log('updated')
    })
 
   }else{
@@ -637,20 +642,41 @@ app.post('/api/NewThumbnail',MulterAnyFunction.any(),(req,res)=>{
 app.post('/api/ChangeshowSupportButton', MulterAnyFunction.any(),(req,res)=>{
    if(req.body.showSupportButton== 'true'){
   UserModel.findByIdAndUpdate(req.body.userID,{showSupportButton:true},(err)=>{
-   if (err){ console.error(err)}   console.log('updated')
+   if (err){ console.error(err)}   //console.log('updated')
  })}else{
   UserModel.findByIdAndUpdate(req.body.userID,{showSupportButton:false},(err)=>{
-    if (err){ console.error(err)}   console.log('updated')
+    if (err){ console.error(err)}  // console.log('updated')
   })
  }
  })
 
+app.get('/api/Content/:page', (req, res) => {
+  const resultsPerPage = 6;
+  let page = req.params.page >= 1 ? req.params.page : 1;
+  page = page - 1
+  VideoContent
+  .find()
+  .sort({ name: "asc" })
+  .limit(resultsPerPage)
+  .skip(resultsPerPage * page)
+  .then((results) => {
+    res.json(results)
+  })
+})
 app.get('/api/Content', (req, res) => {
-  VideoContent.find().then((results) => {
+
+  VideoContent
+  .find()
+  .then((results) => {
     res.json(results)
   })
 })
 app.get('/api/Content/Songs', (req, res) => {
+  VideoContent.find({Category:"Songs"}).then((results) => {
+    res.json(results)
+  })
+})
+app.get('/api/Content/Songs/:page', (req, res) => {
   VideoContent.find({Category:"Songs"}).then((results) => {
     res.json(results)
   })
@@ -660,7 +686,17 @@ app.get('/api/Content/Sermons', (req, res) => {
     res.json(results)
   })
 })
+app.get('/api/Content/Sermons/:page', (req, res) => {
+  VideoContent.find({Category:"Sermons"}).then((results) => {
+    res.json(results)
+  })
+})
 app.get('/api/Content/testmonies', (req, res) => {
+  VideoContent.find({Category:"Testmony"}).then((results) => {
+    res.json(results)
+  })
+})
+app.get('/api/Content/testmonies/:page', (req, res) => {
   VideoContent.find({Category:"Testmony"}).then((results) => {
     res.json(results)
   })
