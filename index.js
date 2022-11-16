@@ -62,7 +62,6 @@ app.use(session({
   saveUninitialized: true,
   cookie: { maxAge: 1000 * 60 * 60 * 24 }
 }))
-app.use(Express.static('build'))
 app.use(Express.urlencoded({ extended: true }));
 
 const DB = "mongodb+srv://Archived:Gospel@gospelarchived.hih5hr9.mongodb.net/?retryWrites=true&w=majority";
@@ -86,9 +85,7 @@ function bufferToStream(buffer) {
 app.use(passport.initialize());
 app.use(passport.session());
 
-// app.get('*',(req,res)=>{
-//   res.sendFile(path.join(__dirname ,'build',"index.html"))
-// })
+
 
 app.get('/api/auth/google',
   passport.authenticate('google', {
@@ -656,11 +653,23 @@ app.get('/api/Content/:page', (req, res) => {
   page = page - 1
   VideoContent
   .find()
-  .sort({ name: "asc" })
+  .sort({ Title: "asc" })
   .limit(resultsPerPage)
   .skip(resultsPerPage * page)
   .then((results) => {
-    res.json(results)
+    
+    if(results.length !== 0){
+      res.json(results)
+    }else{
+      VideoContent
+  .find()
+  .sort({ Title: "asc" })
+  .limit(resultsPerPage)
+  .then((resulta)=>{
+    res.json(resulta)
+  })
+    }
+   
   })
 })
 app.get('/api/Content', (req, res) => {
@@ -677,9 +686,30 @@ app.get('/api/Content/Songs', (req, res) => {
   })
 })
 app.get('/api/Content/Songs/:page', (req, res) => {
-  VideoContent.find({Category:"Songs"}).then((results) => {
-    res.json(results)
+  const resultsPerPage = 6;
+  let page = req.params.page >= 1 ? req.params.page : 1;
+  page = page - 1
+  VideoContent
+  .find({Category:"Songs"})
+  .sort({ Title: "asc" })
+  .limit(resultsPerPage)
+  .skip(resultsPerPage * page)
+  .then((results) => {
+    
+    if(results.length !== 0){
+      res.json(results)
+    }else{
+      VideoContent
+  .find({Category:"Songs"})
+  .sort({ Title: "asc" })
+  .limit(resultsPerPage)
+  .then((resulta)=>{
+    res.json(resulta)
   })
+    }
+   
+  })
+
 })
 app.get('/api/Content/Sermons', (req, res) => {
   VideoContent.find({Category:"Sermons"}).then((results) => {
@@ -687,9 +717,30 @@ app.get('/api/Content/Sermons', (req, res) => {
   })
 })
 app.get('/api/Content/Sermons/:page', (req, res) => {
-  VideoContent.find({Category:"Sermons"}).then((results) => {
-    res.json(results)
+  const resultsPerPage = 6;
+  let page = req.params.page >= 1 ? req.params.page : 1;
+  page = page - 1
+  VideoContent
+  .find({Category:"Sermons"})
+  .sort({ Title: "asc" })
+  .limit(resultsPerPage)
+  .skip(resultsPerPage * page)
+  .then((results) => {
+    
+    if(results.length !== 0){
+      res.json(results)
+    }else{
+      VideoContent
+  .find({Category:"Sermons"})
+  .sort({ Title: "asc" })
+  .limit(resultsPerPage)
+  .then((resulta)=>{
+    res.json(resulta)
   })
+    }
+   
+  })
+
 })
 app.get('/api/Content/testmonies', (req, res) => {
   VideoContent.find({Category:"Testmony"}).then((results) => {
@@ -697,13 +748,55 @@ app.get('/api/Content/testmonies', (req, res) => {
   })
 })
 app.get('/api/Content/testmonies/:page', (req, res) => {
-  VideoContent.find({Category:"Testmony"}).then((results) => {
-    res.json(results)
+  const resultsPerPage = 6;
+  let page = req.params.page >= 1 ? req.params.page : 1;
+  page = page - 1
+  VideoContent
+  .find({Category:"Testmony"})
+  .sort({ Title: "asc" })
+  .limit(resultsPerPage)
+  .skip(resultsPerPage * page)
+  .then((results) => {
+    
+    if(results.length !== 0){
+      res.json(results)
+    }else{
+      VideoContent
+  .find({Category:"Testmony"})
+  .sort({ Title: "asc" })
+  .limit(resultsPerPage)
+  .then((resulta)=>{
+    res.json(resulta)
   })
+    }
+   
+  })
+
 })
-app.get('/api/Content/mostViews', (req, res) => {
-  VideoContent.find().sort({Views:-1}).then((results) => {
-    res.json(results)
+
+app.get('/api/Content/mostViews/:page', (req, res) => {
+  const resultsPerPage = 6;
+  let page = req.params.page >= 1 ? req.params.page : 1;
+  page = page - 1
+  VideoContent
+  .find({Category:"Testmony"})
+  .sort({Views:-1})
+  .limit(resultsPerPage)
+  .skip(resultsPerPage * page)
+  .then((results) => {
+    
+    if(results.length !== 0){
+      res.json(results)
+    }else{
+      VideoContent
+  .find({Category:"Testmony"})
+  .sort({Views:-1})
+  .limit(resultsPerPage)
+  .then((resulta)=>{
+    res.json(resulta)
+  })
+    }
+   
   })
 })
 let port=process.env.PORT|| 3001
