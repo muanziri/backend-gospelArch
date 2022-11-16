@@ -6,7 +6,7 @@ const { VideoContent } = require('./Model/ContentPool')
 const multer = require('multer');
 var cors = require('cors');
 const fetch = require('node-fetch');
-const theFrontEndProxy='http://10.138.0.2:3000'
+const theFrontEndProxy='http://34.145.74.143:3000'
 const theBackendProxy='http://localhost:3001'
 let uniqid = require('uniqid');
 const passport = require('passport')
@@ -51,7 +51,7 @@ const issue2options = {
   credentials: true,
   maxAge: 3600
 };
- app.use(cors({origin: ["http://localhost:3000","http://192.168.1.68:3000"],
+ app.use(cors({origin: ["http://34.145.74.143:3000","http://192.168.1.68:3000"],
  methods:['POST','GET','PUSH'],
  credentials  : true}));
  
