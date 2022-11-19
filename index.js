@@ -1,12 +1,14 @@
-const path=require('path')
+
+var jwt = require('jsonwebtoken');
 const Express = require('express')
 const { google } = require('googleapis');
+const {TokenGenerator,verifier} = require('./Authentication/JWT')
 const mongoose = require('mongoose');
 const { VideoContent } = require('./Model/ContentPool')
 const multer = require('multer');
 var cors = require('cors');
 const fetch = require('node-fetch');
-const theFrontEndProxy='http://34.145.74.143:3000'
+const theFrontEndProxy='http://localhost:3000'
 const theBackendProxy='http://localhost:3001'
 let uniqid = require('uniqid');
 const passport = require('passport')
@@ -22,9 +24,9 @@ require('./Authentication/google')
 require('./Authentication/Facebook')
 require('./Authentication/twitter')
 require('./Authentication/passportLocal')
-require('./Authentication/passportLocalSignup')
 const key = require('./gospleKeys.json');
 const { content } = require('googleapis/build/src/apis/content');
+const cookieParser = require('cookie-parser');
 var jwToken = new google.auth.JWT(
   key.client_email,
   null,
@@ -51,10 +53,10 @@ const issue2options = {
   credentials: true,
   maxAge: 3600
 };
- app.use(cors({origin: ["http://34.145.74.143:3000","http://192.168.1.68:3000"],
+ app.use(cors({origin: ["http://localhost:3000","http://192.168.1.68:3000"],
  methods:['POST','GET','PUSH'],
  credentials  : true}));
- 
+
 app.use(Express.urlencoded({ extended: true }))
 app.use(session({
   secret: 'keyboard.com',
@@ -62,7 +64,7 @@ app.use(session({
   saveUninitialized: true,
   cookie: { maxAge: 1000 * 60 * 60 * 24 }
 }))
-app.use(Express.urlencoded({ extended: true }));
+//app.use(cookieParser())
 
 const DB = "mongodb+srv://Archived:Gospel@gospelarchived.hih5hr9.mongodb.net/?retryWrites=true&w=majority";
 mongoose.connect(DB, { useNewUrlParser: true, useUnifiedTopology: true })
@@ -86,6 +88,42 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 
+// app.post('/api/authentication/SignIn',  passport.authenticate('local'),
+// function(req, res) {
+//   if(req.user){
+//     res.json({user:req.user})
+//   }else{
+//     res.json({user:"no user"})
+//   }
+ 
+// });
+app.post('/api/authentication/SignIn',
+function(req, res) {
+
+  passport.authenticate('local', function(err, user, info,done) {
+   UserModel.findOne({ Email: req.body.Email }).then((user1)=>{
+        if (!user1) { res.json({Autherisation:'There is no user with this email'}) }else{
+           let CheckPassword=verifier(user1.AuthId,user1.Email)
+          if (CheckPassword !== req.body.password) {  res.json({Autherisation:'Wrong password'})}else{
+            res.json({Autherisation:'Authorised'})
+            console.log(user1)
+            req.logIn(user1, function(err) {
+              if (err) { return console.log(err); }
+              console.log(req.user)
+            })
+          }
+        }
+      })
+  })(req, res);
+});
+
+
+
+
+
+
+
+//   })
 
 app.get('/api/auth/google',
   passport.authenticate('google', {
@@ -96,7 +134,7 @@ app.get('/api/auth/google',
 app.get('/auth/google/callback',
   passport.authenticate('google', { failureRedirect: theFrontEndProxy+'/authentication/sign-in' }),
   function (req, res) {
-    
+
    res.redirect(theFrontEndProxy);
    // res.json({ user: req.user })
   });
@@ -104,7 +142,7 @@ app.get('/auth/google/callback',
 app.get('/api/auth/twitter',
   passport.authenticate('twitter'));
 
-app.get('/auth/twitter/callback', 
+app.get('/auth/twitter/callback',
   passport.authenticate('twitter', { failureRedirect: '/login' }),
   function(req, res) {
     // Successful authentication, redirect home.
@@ -129,33 +167,66 @@ app.get('/api', (req, res) => {
     res.json({ user: req.user })
   }else{
     res.json({ user: "no user" })
-    
+
   }
 })
 
 
 
-app.post('/api/authentication/SignUp', passport.authenticate('local-signup', {
-  successRedirect: '/home',
-  failuerRedirect: '/signup',
-  failuerFlash: true
-}))
-app.get('/home', (req, res) => {
-  //res.json({messageSuccess:'the user registered now login'})
-  res.redirect(theFrontEndProxy+'/')
-})
+// app.post('/api/authentication/SignUp', passport.authenticate('local-signup', {
+//   failuerRedirect: '/failureSignup',
+// }),function(req, res) {
+//  console.log('success Signup')
+// })
+app.post('/api/authentication/SignUp', MulterAnyFunction.any(),
+ (req,res)=>{
+   let name=req.body.name;
+  let email=req.body.Email.toLowerCase();
+  let phone=req.body.Phone;
+  let password=req.body.password;
+  var folderId='1Xw8Ydiou9iCpS5jybiaqjmT_bR0GaRcm'//1Xw8Ydiou9iCpS5jybiaqjmT_bR0GaRcm
+  var folderName=name
+  var fileMetadataa = {
+        'name': folderName,
+        'mimeType': 'application/vnd.google-apps.folder',
+        parents: [folderId]
+  }
 
-app.get('/signup', (req, res) => {
-  //res.json({messageFailure:'the user Already  exist'})
-  res.redirect(theFrontEndProxy+'/authentication/sign-up')
-})
+  let AuthIdentity=TokenGenerator(password,email)
+  UserModel.findOne({Email:email}).then((results)=>{
+    if(results == null){
+      drive.files.create({
+        auth: jwToken,
+        resource: fileMetadataa,
+        fields: 'id'
+      },function (err,file){
+
+      new UserModel({
+        Email:email,
+        AuthId:AuthIdentity,
+        Phone:phone,
+        userName:name,
+        folderId:file.data.id
+      }).save().then((results)=>{
+       res.json({messageSuccess:'User Registered ,Now Login'})
+      })
+    })
+    }else{
+     res.json({messageFailure:'Email is not available'})
+    }
+
+   })
+  //console.log(req.body)
+ })
+
 app.get('/login', (req, res) => {
   //res.json({messageFailure:'the user Already  exist'})
-  res.redirect(theFrontEndProxy+'/authentication/sign-in')
+  res.redirect(theFrontEndProxy+'/')
 })
 
 
 app.get('/api/FlashMessagesUser', (req, res) => {
+  console.log(req.user)
   if (req.user) {
     res.json({ 'successMessage': 'Welcome Back' })
   } else {
@@ -173,23 +244,19 @@ app.get('/api/notification',(req,res)=>{
    res.json({notif});
   })
 })
-app.post('/api/authentication/SignIn', passport.authenticate('local', { failureRedirect: '/login' }), (req, res) => {
-
-  res.redirect('/home')
 
 
-})
 
 
 app.post('/api/ToTheDrive', MulterAnyFunction.any(), (req, res) => {
   let user = JSON.parse(req.body.user)
   let DURATION;
   function readableDuration(seconds) {
-    sec = Math.floor( seconds );    
+    sec = Math.floor( seconds );
     min = Math.floor( sec / 60 );
-    min = min >= 10 ? min : '0' + min;    
+    min = min >= 10 ? min : '0' + min;
     sec = Math.floor( sec % 60 );
-    sec = sec >= 10 ? sec : '0' + sec;    
+    sec = sec >= 10 ? sec : '0' + sec;
     return min + ':' + sec;
 }
 
@@ -285,7 +352,7 @@ app.post('/api/coinbase', MulterAnyFunction.any(), (req,res) => {
   UserModel.findById(req.body.IdOfTheSupporter).then((results1)=>{
     VideoContent.findOne({userName:req.body.accountName}).then((results2)=>{
        let SuccessUrl=theBackendProxy+"/api/coinbasecConfirmPayment/"+results1._id+results2._id+req.body.ammount;
-      
+
     const url = 'https://api.commerce.coinbase.com/charges';
     const options = {
       method: 'POST',
@@ -305,14 +372,14 @@ app.post('/api/coinbase', MulterAnyFunction.any(), (req,res) => {
         cancel_url: theBackendProxy+'/cancel'
       })
     };
-  
+
     fetch(url, options)
       .then(res => res.json())
       .then((responce)=>{res.redirect(responce.data.hosted_url)})
       .catch(err => console.error('error:' + err));
     })
   })
-  
+
 })
 app.post('/api/paypal', MulterAnyFunction.any(),(req,res)=>{
  // console.log(req.body)
@@ -345,7 +412,7 @@ app.post('/api/paypal', MulterAnyFunction.any(),(req,res)=>{
           "description": "support for "+""+results2.userName
       }]
     };
-    
+
     paypal.payment.create(create_payment_json, function (error, payment) {
     if (error) {
         throw error;
@@ -391,10 +458,10 @@ app.get('/api/coinbasecConfirmPayment/:id',(req,res)=>{
         res.redirect(theFrontEndProxy+'/')
       })
     })
-   
+
   })})
-   
-  
+
+
 })
 app.get('/api/PaypalConfirmPayment/:id',(req,res)=>{
   let theId=req.params.id;
@@ -414,7 +481,7 @@ app.get('/api/PaypalConfirmPayment/:id',(req,res)=>{
         }
     }]
   };
-      
+
   paypal.payment.execute(paymentId, execute_payment_json, function (error, payment) {
     if (error) {
         console.log(error.response);
@@ -451,10 +518,10 @@ app.get('/api/PaypalConfirmPayment/:id',(req,res)=>{
       })
     })
 
-   
+
   })})
-   
-  
+
+
 })
 app.post('/api/search',MulterAnyFunction.any(),async(req,res)=>{
   let searchRes= await VideoContent.find({Title:{$regex:new RegExp('^'+req.body.payload+'.*','i')}}).exec();
@@ -475,11 +542,11 @@ app.post('/api/addLike', MulterAnyFunction.any(), (req, res) => {
 
 })
 app.post('/api/addViews', MulterAnyFunction.any(), (req, res) => {
-  
- 
+
+
   VideoContent.findOne({ ThumbnailId: req.body.videoId }).then((results2)=>{
     UserModel.findById(results2.userId).then((results) => {
-  
+
     let newLikesVideo =results2.Views + 1
     let newLikesUserModel = results.views + 1
     VideoContent.updateOne({ ThumbnailId: req.body.videoId }, {Views:newLikesVideo}, () => {
@@ -489,7 +556,7 @@ app.post('/api/addViews', MulterAnyFunction.any(), (req, res) => {
     })})
 
    })
-   
+
 
 })
 app.post('/api/addHistory', MulterAnyFunction.any(), (req, res) => {
@@ -498,7 +565,7 @@ app.post('/api/addHistory', MulterAnyFunction.any(), (req, res) => {
   })
 })
 app.post('/api/ChangeProfileInfo', MulterAnyFunction.any(), (req, res) => {
-  
+
   var fileMetadata = {
     'name': [req.files[0].originalname],
     parents: [req.body.userId]
@@ -522,7 +589,7 @@ app.post('/api/ChangeProfileInfo', MulterAnyFunction.any(), (req, res) => {
       UserModel.updateOne({folderId:req.body.userId},{ProfilePhotoUrl:theNewUrl,Email:req.body.ChangeEmail,userName:req.body.ChangeName,phoneNumber:req.body.ChangePhone},()=>{
        // console.log('updated')
       })
-      
+
     }
   });
 //console.log(req.body,req.files[0])
@@ -606,7 +673,7 @@ app.post('/api/ChangeshowAccountPerfomance', MulterAnyFunction.any(),(req,res)=>
     if (err){ console.error(err)}
    })
   }
- 
+
   //console.log(req.body.showAccountPerfomance)
 })
 app.post('/api/NewThumbnail',MulterAnyFunction.any(),(req,res)=>{
@@ -626,15 +693,15 @@ app.post('/api/NewThumbnail',MulterAnyFunction.any(),(req,res)=>{
       resource: fileMetadata,
       media: media,
       fields: 'id',
-  
+
     }, async function (err, file) {
       if (err) throw err
       VideoContent.updateOne({VideoId:req.body.thumbnailId},{VideoId:file.data.id},(err)=>{
         if (err) throw err
       })
     });
-   
-  
+
+
 })
 app.post('/api/ChangeshowSupportButton', MulterAnyFunction.any(),(req,res)=>{
    if(req.body.showSupportButton== 'true'){
@@ -657,7 +724,7 @@ app.get('/api/Content/:page', (req, res) => {
   .limit(resultsPerPage)
   .skip(resultsPerPage * page)
   .then((results) => {
-    
+
     if(results.length !== 0){
       res.json(results)
     }else{
@@ -669,7 +736,7 @@ app.get('/api/Content/:page', (req, res) => {
     res.json(resulta)
   })
     }
-   
+
   })
 })
 app.get('/api/Content', (req, res) => {
@@ -695,7 +762,7 @@ app.get('/api/Content/Songs/:page', (req, res) => {
   .limit(resultsPerPage)
   .skip(resultsPerPage * page)
   .then((results) => {
-    
+
     if(results.length !== 0){
       res.json(results)
     }else{
@@ -707,7 +774,7 @@ app.get('/api/Content/Songs/:page', (req, res) => {
     res.json(resulta)
   })
     }
-   
+
   })
 
 })
@@ -726,7 +793,7 @@ app.get('/api/Content/Sermons/:page', (req, res) => {
   .limit(resultsPerPage)
   .skip(resultsPerPage * page)
   .then((results) => {
-    
+
     if(results.length !== 0){
       res.json(results)
     }else{
@@ -738,7 +805,7 @@ app.get('/api/Content/Sermons/:page', (req, res) => {
     res.json(resulta)
   })
     }
-   
+
   })
 
 })
@@ -757,7 +824,7 @@ app.get('/api/Content/testmonies/:page', (req, res) => {
   .limit(resultsPerPage)
   .skip(resultsPerPage * page)
   .then((results) => {
-    
+
     if(results.length !== 0){
       res.json(results)
     }else{
@@ -769,7 +836,7 @@ app.get('/api/Content/testmonies/:page', (req, res) => {
     res.json(resulta)
   })
     }
-   
+
   })
 
 })
@@ -784,7 +851,7 @@ app.get('/api/Content/mostViews/:page', (req, res) => {
   .limit(resultsPerPage)
   .skip(resultsPerPage * page)
   .then((results) => {
-    
+
     if(results.length !== 0){
       res.json(results)
     }else{
@@ -796,7 +863,7 @@ app.get('/api/Content/mostViews/:page', (req, res) => {
     res.json(resulta)
   })
     }
-   
+
   })
 })
 let port=process.env.PORT|| 3001

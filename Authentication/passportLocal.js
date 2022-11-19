@@ -3,31 +3,32 @@ const { UserModel } = require('../Model/user');
 const {TokenGenerator,verifier} = require('./JWT')
 const LocalStrategy=require('passport-local').Strategy
 passport.serializeUser((user1 ,done)=>{
- 
-    done(null,user1.id);
+  console.log(user1)
+    //done(null,user);
     
  
  })
  passport.deserializeUser((id,done)=>{
-   
-   UserModel.findById(id).then((user)=>{
-     
-     done(null,user);
-   })
+   console.log(id)
+  //  UserModel.findById(id).then((user)=>{
+  //    console.log(user)
+  //   done(null,user);
+  //  })
    
  })
 passport.use(new LocalStrategy({
-  usernameField : 'email',
+  usernameField : 'Email',
   passwordField : 'password',
   passReqToCallback : true 
 },
-    function(req,email, password,done){
-     
-      UserModel.findOne({ Email: email }).then((user)=>{
-        if (!user) { return done(null, false); }else{
-          let CheckPassword=verifier(user.AuthId,req.body.password)
-         if (CheckPassword !== email) { return done(null, false); }else{
-            return done(null, user);
+    function(req,Email, password,done){
+      UserModel.findOne({ Email: Email }).then((user1)=>{
+        if (!user1) { return done(null, false); }else{
+          let CheckPassword=verifier(user1.AuthId,Email)
+          //console.log(CheckPassword)
+         if (CheckPassword !== password) { return done(null, false); }else{
+          
+            return done(null,user1)
           }
         }
       })
