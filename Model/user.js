@@ -61,6 +61,16 @@ const UserSchema = new Schema({
         required:true,
         default:true
     },
+    resetPin:{
+        type:Number,
+        required:true,
+        default:00000
+    },
+    AccountActivated:{
+        type:Boolean,
+        required:true,
+        default:false
+    },
     Date:{
         type: Date,
         required: true,
