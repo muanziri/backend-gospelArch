@@ -234,6 +234,12 @@ app.post("/api/ResetPasswordProceeds", (req, res) => {
     });
   });
 });
+app.post('/api/logout',(req,res)=>{
+  if(req.body.status == "logging out"){
+    res.clearCookie("AuthToken0111")
+    res.json({ActivateResponce : 'logout successful'})
+  }
+})
 app.post("/api/CheckActivationCode", (req, res) => {
   let Pin = req.body.TheCode;
   
