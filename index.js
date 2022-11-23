@@ -55,7 +55,7 @@ const issue2options = {
 };
 app.use(
   cors({
-    origin: ["http://35.197.50.166:3000", "http://192.168.1.68:3000"],
+    origin: ["http://35.197.50.166:3000", "http://localhost:3000"],
     methods: ["POST", "GET", "PUSH"],
     credentials: true,
   })
