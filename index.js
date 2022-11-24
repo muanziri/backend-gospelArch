@@ -433,6 +433,7 @@ app.post("/api/ToTheDrive", MulterAnyFunction.any(), (req, res) => {
                     { userName: user.user.userName },
                     { $addToSet: { PostsIds: response.id } },
                     function () {
+                      res.json({uploadStatus : "uploaded"})
                       // console.log('updated the usermodel', response.id)
                     }
                   );
