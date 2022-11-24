@@ -1,7 +1,10 @@
 var jwt = require("jsonwebtoken");
+//let path=require('path')
 const bcrypt = require("bcrypt");
 const { sendMail } = require("./sendEmailFunction");
 const Express = require("express");
+const path = __dirname + '/build/';
+
 const { google } = require("googleapis");
 const { TokenGenerator, verifier } = require("./Authentication/JWT");
 const mongoose = require("mongoose");
@@ -55,7 +58,7 @@ const issue2options = {
 };
 app.use(
   cors({
-    origin: ["http://35.197.50.166:3000", "http://localhost:3000"],
+    origin: ["http://35.197.50.166:3000", "http://localhost:3000","http://localhost:3001"],
     methods: ["POST", "GET", "PUSH"],
     credentials: true,
   })
@@ -71,6 +74,7 @@ app.use(
   })
 );
 app.use(cookieParser());
+app.use(Express.static(path));
 
 const DB =
   "mongodb+srv://Archived:Gospel@gospelarchived.hih5hr9.mongodb.net/?retryWrites=true&w=majority";
@@ -1129,7 +1133,6 @@ app.get("/api/Content/testmonies/:page", (req, res) => {
       }
     });
 });
-
 app.get("/api/Content/mostViews/:page", (req, res) => {
   const resultsPerPage = 6;
   let page = req.params.page >= 1 ? req.params.page : 1;
@@ -1151,6 +1154,11 @@ app.get("/api/Content/mostViews/:page", (req, res) => {
       }
     });
 });
+app.get('*',(req,res)=>{
+  //res.sendFile(path.join(__dirname, "build", 'index.html'))
+  res.sendFile(path);
+
+})
 
 let port = process.env.PORT || 3001;
 app.listen(port, () => {
