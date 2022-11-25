@@ -1,7 +1,7 @@
 {
   "files": {
     "main.css": "/static/css/main.6e9021f7.css",
-    "main.js": "/static/js/main.08ee4908.js",
+    "main.js": "/static/js/main.2994a35c.js",
     "static/media/curved0.jpg": "/static/media/curved0.d146ec6e9401aa9d52c5.jpg",
     "service-worker.js": "/service-worker.js",
     "static/media/white-curved.jpeg": "/static/media/white-curved.a5b7db662b0b14ab5534.jpeg",
@@ -12,6 +12,6 @@
   },
   "entrypoints": [
     "static/css/main.6e9021f7.css",
-    "static/js/main.08ee4908.js"
+    "static/js/main.2994a35c.js"
   ]
 }
