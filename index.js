@@ -58,7 +58,7 @@ const issue2options = {
 };
 app.use(
   cors({
-    origin: ["http://localhost:3001","http://35.197.50.166:3000", "http://localhost:3000"],
+    origin: ["http://localhost:3000","http://35.197.50.166:3000", "http://localhost:3000"],
     methods: ["POST", "GET", "PUSH"],
     credentials: true,
   })
@@ -1138,21 +1138,14 @@ app.get("/api/Content/mostViews/:page", (req, res) => {
   const resultsPerPage = 6;
   let page = req.params.page >= 1 ? req.params.page : 1;
   page = page - 1;
-  VideoContent.find({ Category: "Testmony" })
+  VideoContent.find()
     .sort({ Views: -1 })
     .limit(resultsPerPage)
     .skip(resultsPerPage * page)
     .then((results) => {
       if (results.length !== 0) {
         res.json(results);
-      } else {
-        VideoContent.find({ Category: "Testmony" })
-          .sort({ Views: -1 })
-          .limit(resultsPerPage)
-          .then((resulta) => {
-            res.json(resulta);
-          });
-      }
+      } 
     });
 });
 app.get('*',(req,res)=>{
