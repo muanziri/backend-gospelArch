@@ -1035,7 +1035,7 @@ app.get("/api/Content/:page", (req, res) => {
   let page = req.params.page >= 1 ? req.params.page : 1;
   page = page - 1;
   VideoContent.find()
-    .sort({ Title: "asc" })
+    .sort({ Title: Math.floor(Math.random() * (2 - -1)) + -1})
     .limit(resultsPerPage)
     .skip(resultsPerPage * page)
     .then((results) => {
