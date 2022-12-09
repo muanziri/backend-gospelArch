@@ -1029,6 +1029,19 @@ app.post(
     }
   }
 );
+app.get('/api/CurrentVideo/:id',(req,res)=>{
+  let Id=req.params.id
+
+  VideoContent.findOne({ThumbnailId:Id}).then((results)=>{
+    if(results!==null){
+      res.json({CurrentVid:results})
+
+    }else{
+      res.json({CurrentVid:'deleted'})
+
+    }
+  })
+})
 
 app.get("/api/Content/:page", (req, res) => {
   const resultsPerPage = 6;
