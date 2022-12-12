@@ -750,7 +750,6 @@ app.get("/api/PaypalConfirmPayment/:id", (req, res) => {
             { userName: reaciver.userName },
             { supportAmmount: newSupport },
             () => {
-              //  console.log('new support added')
               res.redirect(theFrontEndProxy + "/");
             }
           );
@@ -1047,10 +1046,11 @@ app.get("/api/Content/:page", (req, res) => {
   const resultsPerPage = 6;
   let page = req.params.page >= 1 ? req.params.page : 1;
   page = page - 1;
-  VideoContent.find()
-    .sort({ Title: Math.floor(Math.random() * (2 - -1)) + -1})
+  VideoContent.find().then((resa)=>{
+    VideoContent.find()
+    .sort({ Title: -1})
     .limit(resultsPerPage)
-    .skip(resultsPerPage * page)
+    .skip(Math.floor(Math.random() * resa.length)+1+resultsPerPage * page)
     .then((results) => {
       if (results.length !== 0) {
         res.json(results);
@@ -1063,7 +1063,10 @@ app.get("/api/Content/:page", (req, res) => {
           });
       }
     });
+  })
+ 
 });
+
 app.get("/api/Content", (req, res) => {
   VideoContent.find().then((results) => {
     res.json(results);
