@@ -1050,7 +1050,7 @@ app.get("/api/Content/:page", (req, res) => {
     VideoContent.find()
     .sort({ Title: -1})
     .limit(resultsPerPage)
-    .skip(Math.floor(Math.random() * resa.length)+1+resultsPerPage * page)
+    .skip(Math.floor(Math.random() * resa.length)+resultsPerPage * page)
     .then((results) => {
       if (results.length !== 0) {
         res.json(results);
